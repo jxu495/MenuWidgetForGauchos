@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dining_commons">
+        <item>Carrillo</item>
+        <item>De La Guerra</item>
+        <item>Ortega</item>
+        <item>Portola</item>
+    </string-array>
+</resources>
