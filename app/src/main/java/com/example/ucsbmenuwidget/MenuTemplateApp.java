@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
 import org.jsoup.*;
@@ -31,7 +30,6 @@ public class MenuTemplateApp extends Activity {
         TextView myTextView = findViewById(R.id.my_textview);
         myTextView.setText(myKeys[position]);
         menuView = findViewById(R.id.menuview);
-        menuView.setMovementMethod(new ScrollingMovementMethod());
         new menuGetter().execute();
     }
 
@@ -41,9 +39,8 @@ public class MenuTemplateApp extends Activity {
             try {
                 //Connect to the website
                 Document document = Jsoup.connect("https://appl.housing.ucsb.edu/menu/day/").get();
-                //change so not hard coded for carrillo
+                //find selected diningcommon by checking string in my_textview
                 String diningCommon = ((TextView) findViewById(R.id.my_textview)).getText().toString();
-                //System.out.println(diningCommon);
                 switch (diningCommon) {
                     case "Carrillo":
                         diningCommon = "carrillo-body";
@@ -67,18 +64,8 @@ public class MenuTemplateApp extends Activity {
                 Elements meals = document.select("#" + diningCommon + " > * > div.panel-body");
                 Elements mealTitles = document.select("#" + diningCommon + " > * > div.panel-heading");
                 int idx = 0;
+                //This for loop adds text to menuText in a format such that meal times, meal items are properly spaced
                 for (Element e : mealTitles) {
-                    //change so that you individually parse each child elements' contents to properly add new lines.
-                    /*
-                    Elements mealItems = e.select("*");
-                    for (Element meal : mealItems) {
-                        if (meal.hasClass("panel-heading")) {
-                            menuText += meal.text();
-                            menuText += "\n";
-                        } else if (meal.hasClass("panel-body")) {
-                            Elements
-                        }
-                    }*/
                     menuText += e.text();
                     menuText += "\n";
                     Elements formatMeals = meals.get(idx).select("> * > *");
