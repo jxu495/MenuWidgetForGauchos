@@ -66,6 +66,7 @@ public class MenuTemplateApp extends Activity {
                 * for elements with class panel-body. This creates a list of menus based on meal time*/
                 Elements meals = document.select("#" + diningCommon + " > * > div.panel-body");
                 Elements mealTitles = document.select("#" + diningCommon + " > * > div.panel-heading");
+                int idx = 0;
                 for (Element e : mealTitles) {
                     //change so that you individually parse each child elements' contents to properly add new lines.
                     /*
@@ -80,6 +81,12 @@ public class MenuTemplateApp extends Activity {
                     }*/
                     menuText += e.text();
                     menuText += "\n";
+                    Elements formatMeals = meals.get(idx).select("> * > *");
+                    for (Element meal : formatMeals) {
+                        menuText += meal.text();
+                        menuText += "\n";
+                    }
+                    idx++;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
