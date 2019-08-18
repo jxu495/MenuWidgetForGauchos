@@ -41,28 +41,29 @@ public class MenuTemplateApp extends Activity {
                 Document document = Jsoup.connect("https://appl.housing.ucsb.edu/menu/day/").get();
                 //find selected diningcommon by checking string in my_textview
                 String diningCommon = ((TextView) findViewById(R.id.my_textview)).getText().toString();
+                String diningCommonID;
                 switch (diningCommon) {
                     case "Carrillo":
-                        diningCommon = "carrillo-body";
+                        diningCommonID = "carrillo-body";
                         break;
                     case "De La Guerra":
-                        diningCommon = "de-la-guerra-body";
+                        diningCommonID = "de-la-guerra-body";
                         break;
                     case "Ortega":
-                        diningCommon = "ortega-body";
+                        diningCommonID = "ortega-body";
                         break;
                     case "Portola":
-                        diningCommon = "portola-body";
+                        diningCommonID = "portola-body";
                         break;
                     default:
-                        diningCommon = "Invalid";
+                        diningCommonID = "Invalid";
                         break;
                 }
                 /* this line finds the menu for a dining common using the id tag (#), then
                 * it goes through all its children, and looks through the children's children
                 * for elements with class panel-body. This creates a list of menus based on meal time*/
-                Elements meals = document.select("#" + diningCommon + " > * > div.panel-body");
-                Elements mealTitles = document.select("#" + diningCommon + " > * > div.panel-heading");
+                Elements meals = document.select("#" + diningCommonID + " > * > div.panel-body");
+                Elements mealTitles = document.select("#" + diningCommonID + " > * > div.panel-heading");
                 int idx = 0;
                 //This for loop adds text to menuText in a format such that meal times, meal items are properly spaced
                 for (Element e : mealTitles) {
@@ -74,6 +75,9 @@ public class MenuTemplateApp extends Activity {
                         menuText += "\n";
                     }
                     idx++;
+                }
+                if(menuText == "") {
+                    menuText = diningCommon + " is closed.";
                 }
             } catch (IOException e) {
                 e.printStackTrace();
