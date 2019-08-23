@@ -25,6 +25,10 @@
                 android:layout_height="match_parent"
                 android:lineSpacingExtra="8sp"
                 android:text="Loading..." />
+            <ExpandableListView
+                android:id="@+id/expandmenu"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent" />
         </LinearLayout>
     </ScrollView>
 

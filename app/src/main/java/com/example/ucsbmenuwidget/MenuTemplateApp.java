@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import org.jsoup.*;
@@ -12,8 +14,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MenuTemplateApp extends Activity {
+    ExpandableListView expandMenu;
+    ExpandableListAdapter expandMenuAdapter;
+    List<String> menuTitles;
+    HashMap<String, List<String>> menuDetails;
     TextView menuView;
     String menuText = "";
 
@@ -26,9 +35,11 @@ public class MenuTemplateApp extends Activity {
 
         // Here we turn your string.xml in an array
         String[] myKeys = getResources().getStringArray(R.array.dining_commons);
-
         TextView myTextView = findViewById(R.id.my_textview);
         myTextView.setText(myKeys[position]);
+        expandMenu = findViewById(R.id.expandmenu);
+        expandMenuAdapter = new CustomExpandableListAdapter(this, menuTitles, menuDetails);
+        expandMenu.setAdapter(expandMenuAdapter);
         menuView = findViewById(R.id.menuview);
         new menuGetter().execute();
     }
@@ -67,13 +78,17 @@ public class MenuTemplateApp extends Activity {
                 int idx = 0;
                 //This for loop adds text to menuText in a format such that meal times, meal items are properly spaced
                 for (Element e : mealTitles) {
+                    menuTitles.add(e.text());
                     menuText += e.text();
                     menuText += "\n";
                     Elements formatMeals = meals.get(idx).select("> * > *");
+                    List<String> mealList = new ArrayList<String>();
                     for (Element meal : formatMeals) {
+                        mealList.add(meal.text());
                         menuText += meal.text();
                         menuText += "\n";
                     }
+                    menuDetails.put(e.text(), mealList);
                     idx++;
                 }
                 if(menuText == "") {
