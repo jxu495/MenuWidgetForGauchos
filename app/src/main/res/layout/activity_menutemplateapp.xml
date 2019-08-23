@@ -10,26 +10,16 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <ScrollView
+    <TextView
+        android:id="@+id/menuview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="8sp"
+        android:text="Loading..." />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/menuview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:lineSpacingExtra="8sp"
-                android:text="Loading..." />
-            <ExpandableListView
-                android:id="@+id/expandmenu"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent" />
-        </LinearLayout>
-    </ScrollView>
+    <ExpandableListView
+        android:id="@+id/expandmenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

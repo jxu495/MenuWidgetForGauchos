@@ -37,9 +37,9 @@ public class MenuTemplateApp extends Activity {
         String[] myKeys = getResources().getStringArray(R.array.dining_commons);
         TextView myTextView = findViewById(R.id.my_textview);
         myTextView.setText(myKeys[position]);
+        menuTitles = new ArrayList<>();
+        menuDetails = new HashMap<>();
         expandMenu = findViewById(R.id.expandmenu);
-        expandMenuAdapter = new CustomExpandableListAdapter(this, menuTitles, menuDetails);
-        expandMenu.setAdapter(expandMenuAdapter);
         menuView = findViewById(R.id.menuview);
         new menuGetter().execute();
     }
@@ -79,20 +79,20 @@ public class MenuTemplateApp extends Activity {
                 //This for loop adds text to menuText in a format such that meal times, meal items are properly spaced
                 for (Element e : mealTitles) {
                     menuTitles.add(e.text());
-                    menuText += e.text();
-                    menuText += "\n";
+                    //menuText += e.text();
+                    //menuText += "\n";
                     Elements formatMeals = meals.get(idx).select("> * > *");
                     List<String> mealList = new ArrayList<String>();
                     for (Element meal : formatMeals) {
                         mealList.add(meal.text());
-                        menuText += meal.text();
-                        menuText += "\n";
+                        //menuText += meal.text();
+                        //menuText += "\n";
                     }
                     menuDetails.put(e.text(), mealList);
                     idx++;
                 }
                 if(menuText == "") {
-                    menuText = diningCommon + " is closed.";
+                    //menuText = diningCommon + " is closed.";
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -113,6 +113,8 @@ public class MenuTemplateApp extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            expandMenuAdapter = new CustomExpandableListAdapter(getApplicationContext(), menuTitles, menuDetails);
+            expandMenu.setAdapter(expandMenuAdapter);
             menuView.setText(menuText);
         }
     }
