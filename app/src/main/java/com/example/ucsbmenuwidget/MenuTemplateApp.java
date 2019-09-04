@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -23,8 +24,8 @@ public class MenuTemplateApp extends Activity {
     ExpandableListAdapter expandMenuAdapter;
     List<String> menuTitles;
     HashMap<String, List<String>> menuDetails;
-    TextView menuView;
-    String menuText = "";
+    TextView isClosedView;
+    String closedText = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class MenuTemplateApp extends Activity {
         menuTitles = new ArrayList<>();
         menuDetails = new HashMap<>();
         expandMenu = findViewById(R.id.expandmenu);
-        menuView = findViewById(R.id.menuview);
+        isClosedView = findViewById(R.id.isclosedview);
         new menuGetter().execute();
     }
 
@@ -79,23 +80,19 @@ public class MenuTemplateApp extends Activity {
                 //This for loop adds text to menuText in a format such that meal times, meal items are properly spaced
                 for (Element e : mealTitles) {
                     menuTitles.add(e.text());
-                    //menuText += e.text();
-                    //menuText += "\n";
                     Elements formatMeals = meals.get(idx).select("> * > *");
-                    List<String> mealList = new ArrayList<String>();
+                    List<String> mealList = new ArrayList<>();
                     for (Element meal : formatMeals) {
                         mealList.add(meal.text());
-                        //menuText += meal.text();
-                        //menuText += "\n";
                     }
                     menuDetails.put(e.text(), mealList);
                     idx++;
                 }
-                if(menuText == "") {
-                    //menuText = diningCommon + " is closed.";
-                }
+                //Note: closedText only shows in the onPostExecute method if there are no meals detected.
+                closedText = diningCommon + " is closed.";
             } catch (IOException e) {
                 e.printStackTrace();
+                closedText = "Can't connect to UCSB Dining Website.";
             }
         }
 
@@ -115,7 +112,11 @@ public class MenuTemplateApp extends Activity {
             super.onPostExecute(aVoid);
             expandMenuAdapter = new CustomExpandableListAdapter(getApplicationContext(), menuTitles, menuDetails);
             expandMenu.setAdapter(expandMenuAdapter);
-            menuView.setText(menuText);
+            if(menuTitles.size() == 0) {
+                isClosedView.setText(closedText);
+            } else {
+                isClosedView.setVisibility(View.GONE);
+            }
         }
     }
 }

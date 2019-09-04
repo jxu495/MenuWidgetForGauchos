@@ -7,15 +7,18 @@
         android:id="@+id/my_textview"
         android:layout_width="match_parent"
         android:layout_height="30dp"
+        android:paddingLeft="5sp"
         android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/menuview"
+        android:id="@+id/isclosedview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:lineSpacingExtra="8sp"
-        android:text="Loading..." />
+        android:text="Loading..."
+        android:textSize="20sp" />
 
     <ExpandableListView
         android:id="@+id/expandmenu"
