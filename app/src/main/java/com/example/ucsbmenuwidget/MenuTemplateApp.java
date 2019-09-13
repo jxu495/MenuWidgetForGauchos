@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import org.jsoup.*;
@@ -12,10 +15,17 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MenuTemplateApp extends Activity {
-    TextView menuView;
-    String menuText = "";
+    ExpandableListView expandMenu;
+    ExpandableListAdapter expandMenuAdapter;
+    List<String> menuTitles;
+    HashMap<String, List<String>> menuDetails;
+    TextView isClosedView;
+    String closedText = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,10 +36,12 @@ public class MenuTemplateApp extends Activity {
 
         // Here we turn your string.xml in an array
         String[] myKeys = getResources().getStringArray(R.array.dining_commons);
-
         TextView myTextView = findViewById(R.id.my_textview);
         myTextView.setText(myKeys[position]);
-        menuView = findViewById(R.id.menuview);
+        menuTitles = new ArrayList<>();
+        menuDetails = new HashMap<>();
+        expandMenu = findViewById(R.id.expandmenu);
+        isClosedView = findViewById(R.id.isclosedview);
         new menuGetter().execute();
     }
 
@@ -67,20 +79,20 @@ public class MenuTemplateApp extends Activity {
                 int idx = 0;
                 //This for loop adds text to menuText in a format such that meal times, meal items are properly spaced
                 for (Element e : mealTitles) {
-                    menuText += e.text();
-                    menuText += "\n";
+                    menuTitles.add(e.text());
                     Elements formatMeals = meals.get(idx).select("> * > *");
+                    List<String> mealList = new ArrayList<>();
                     for (Element meal : formatMeals) {
-                        menuText += meal.text();
-                        menuText += "\n";
+                        mealList.add(meal.text());
                     }
+                    menuDetails.put(e.text(), mealList);
                     idx++;
                 }
-                if(menuText == "") {
-                    menuText = diningCommon + " is closed.";
-                }
+                //Note: closedText only shows in the onPostExecute method if there are no meals detected.
+                closedText = diningCommon + " is closed.";
             } catch (IOException e) {
                 e.printStackTrace();
+                closedText = "Can't connect to UCSB Dining Website.";
             }
         }
 
@@ -98,7 +110,13 @@ public class MenuTemplateApp extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            menuView.setText(menuText);
+            expandMenuAdapter = new CustomExpandableListAdapter(getApplicationContext(), menuTitles, menuDetails);
+            expandMenu.setAdapter(expandMenuAdapter);
+            if(menuTitles.size() == 0) {
+                isClosedView.setText(closedText);
+            } else {
+                isClosedView.setVisibility(View.GONE);
+            }
         }
     }
 }
