@@ -24,13 +24,16 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class MenuTemplateApp extends FragmentActivity {
+public class MenuTemplateApp extends FragmentActivity
+        implements DatePickerDialog.OnDateSetListener {
+
     ExpandableListView expandMenu;
     ExpandableListAdapter expandMenuAdapter;
     List<String> menuTitles;
     HashMap<String, List<String>> menuDetails;
     TextView isClosedView;
     String closedText = "";
+    Calendar menuDate = Calendar.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,12 +52,21 @@ public class MenuTemplateApp extends FragmentActivity {
         isClosedView = findViewById(R.id.isclosedview);
         new menuGetter().execute();
     }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        view.init(year, month, dayOfMonth, null);
+        menuDate.set(Calendar.YEAR, year);
+        menuDate.set(Calendar.MONTH, month);
+        menuDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        new menuGetter().execute();
+
+    }
+
     //change method to run in async task
     private class menuGetter extends AsyncTask<Void, Void, Void> {
         private void getMenu() {
             try {
-                //Connect to the website
-                Document document = Jsoup.connect("https://appl.housing.ucsb.edu/menu/day/").get();
                 //find selected diningcommon by checking string in my_textview
                 String diningCommon = ((TextView) findViewById(R.id.my_textview)).getText().toString();
                 String diningCommonID;
@@ -75,6 +87,13 @@ public class MenuTemplateApp extends FragmentActivity {
                         diningCommonID = "Invalid";
                         break;
                 }
+                String commonsURL = diningCommonID.substring(0, diningCommonID.length() - 5);
+                Document document = Jsoup.connect("https://appl.housing.ucsb.edu/menu/day/?dc="
+                        + commonsURL + "&d=" + (menuDate.get(Calendar.YEAR)) + "-"
+                        + (menuDate.get(Calendar.MONTH) + 1) + "-"
+                        + (menuDate.get(Calendar.DAY_OF_MONTH)) +
+                        "&m=breakfast&m=brunch&m=lunch&m=dinner&m=late-night&food=").get();
+                //Document document = Jsoup.connect("https://appl.housing.ucsb.edu/menu/day/").get();
                 /* this line finds the menu for a dining common using the id tag (#), then
                 * it goes through all its children, and looks through the children's children
                 * for elements with class panel-body. This creates a list of menus based on meal time*/
@@ -82,6 +101,8 @@ public class MenuTemplateApp extends FragmentActivity {
                 Elements mealTitles = document.select("#" + diningCommonID + " > * > div.panel-heading");
                 int idx = 0;
                 //This for loop adds text to menuText in a format such that meal times, meal items are properly spaced
+                menuTitles.clear();
+                menuDetails.clear();
                 for (Element e : mealTitles) {
                     menuTitles.add(e.text());
                     Elements formatMeals = meals.get(idx).select("> * > *");
@@ -117,36 +138,38 @@ public class MenuTemplateApp extends FragmentActivity {
             expandMenuAdapter = new CustomExpandableListAdapter(getApplicationContext(), menuTitles, menuDetails);
             expandMenu.setAdapter(expandMenuAdapter);
             if(menuTitles.size() == 0) {
+                isClosedView.setVisibility(View.VISIBLE);
                 isClosedView.setText(closedText);
             } else {
                 isClosedView.setVisibility(View.GONE);
             }
         }
     }
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
+
+    public static class DatePickerFragment extends DialogFragment {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
+            //TODO: using savedInstanceState, see if i can change the initial highlighted date
             final Calendar c = Calendar.getInstance();
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
 
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
-
+            DatePickerDialog dialog = new DatePickerDialog(getActivity(), (MenuTemplateApp)getActivity(), year, month, day);
+            Calendar calendar = Calendar.getInstance();
+            //set the minimum date to a week before the current date
+            calendar.add(Calendar.DAY_OF_YEAR, -7);
+            dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+            //set max date to a week after current date
+            calendar.add(Calendar.DAY_OF_YEAR, 14);
+            dialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+            return dialog;
         }
     }
+
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
-
-
 }
