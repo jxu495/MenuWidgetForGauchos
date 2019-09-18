@@ -55,7 +55,6 @@ public class MenuTemplateApp extends FragmentActivity
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        view.init(year, month, dayOfMonth, null);
         menuDate.set(Calendar.YEAR, year);
         menuDate.set(Calendar.MONTH, month);
         menuDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -150,8 +149,9 @@ public class MenuTemplateApp extends FragmentActivity
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            //TODO: using savedInstanceState, see if i can change the initial highlighted date
-            final Calendar c = Calendar.getInstance();
+            Bundle date = this.getArguments();
+            Calendar c = (Calendar)date.getSerializable("menuDate");
+            //final Calendar c = Calendar.getInstance();
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
@@ -170,6 +170,9 @@ public class MenuTemplateApp extends FragmentActivity
 
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("menuDate", menuDate);
+        newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 }
