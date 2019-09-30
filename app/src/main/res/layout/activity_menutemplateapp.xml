@@ -48,8 +48,9 @@
         android:id="@+id/calenderbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:drawableLeft="@drawable/ic_calendar_button"
         android:onClick="showDatePickerDialog"
+        android:text="Pick Date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

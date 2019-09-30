@@ -50,7 +50,7 @@ public class MenuTemplateApp extends FragmentActivity
         menuDetails = new HashMap<>();
         expandMenu = findViewById(R.id.expandmenu);
         isClosedView = findViewById(R.id.isclosedview);
-        new menuGetter().execute();
+        new MenuGetter().execute();
     }
 
     @Override
@@ -58,12 +58,12 @@ public class MenuTemplateApp extends FragmentActivity
         menuDate.set(Calendar.YEAR, year);
         menuDate.set(Calendar.MONTH, month);
         menuDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        new menuGetter().execute();
+        new MenuGetter().execute();
 
     }
 
     //change method to run in async task
-    private class menuGetter extends AsyncTask<Void, Void, Void> {
+    private class MenuGetter extends AsyncTask<Void, Void, Void> {
         private void getMenu() {
             try {
                 //find selected diningcommon by checking string in my_textview
@@ -151,7 +151,6 @@ public class MenuTemplateApp extends FragmentActivity
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             Bundle date = this.getArguments();
             Calendar c = (Calendar)date.getSerializable("menuDate");
-            //final Calendar c = Calendar.getInstance();
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
