@@ -93,7 +93,7 @@ public class MenuTemplateApp extends FragmentActivity
                         + (menuDate.get(Calendar.DAY_OF_MONTH)) +
                         "&m=breakfast&m=brunch&m=lunch&m=dinner&m=late-night&food=").get();
                 //Document document = Jsoup.connect("https://appl.housing.ucsb.edu/menu/day/").get();
-                /* this line finds the menu for a dining common using the id tag (#), then
+                /* this line finds the menu_widget for a dining common using the id tag (#), then
                 * it goes through all its children, and looks through the children's children
                 * for elements with class panel-body. This creates a list of menus based on meal time*/
                 Elements meals = document.select("#" + diningCommonID + " > * > div.panel-body");

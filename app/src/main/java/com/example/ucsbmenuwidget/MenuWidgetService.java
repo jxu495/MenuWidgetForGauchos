@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import java.util.ArrayList;
+
 public class MenuWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -14,19 +16,26 @@ public class MenuWidgetService extends RemoteViewsService {
 
 class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
+    private ArrayList<String> menuItems;
+    private Context context;
+    private Intent intent;
+
 
     public MenuRemoteViewsFactory(Context context, Intent intent) {
-
+        this.context = context;
+        this.intent = intent;
+        System.out.println("test");
     }
 
     @Override
     public void onCreate() {
-
+        menuItems = intent.getStringArrayListExtra("menuItems");
+        //System.out.println("test");
+        //System.out.println(menuItems);
     }
 
     @Override
     public void onDataSetChanged() {
-
     }
 
     @Override
@@ -36,12 +45,14 @@ class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getCount() {
-        return 0;
+        return menuItems.size();
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
-        return null;
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list_item);
+        views.setTextViewText(R.id.widget_list_item, menuItems.get(position));
+        return views;
     }
 
     @Override
@@ -51,12 +62,12 @@ class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
