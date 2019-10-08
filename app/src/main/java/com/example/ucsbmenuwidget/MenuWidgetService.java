@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class MenuWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
+        System.out.println("at factory");
         return new MenuRemoteViewsFactory(this.getApplicationContext(), intent);
     }
 }
@@ -24,12 +25,16 @@ class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public MenuRemoteViewsFactory(Context context, Intent intent) {
         this.context = context;
         this.intent = intent;
-        System.out.println("test");
+        menuItems = intent.getStringArrayListExtra("menuItems");
+        System.out.println("test123");
+        System.out.println(menuItems.get(0));
+        //menuItems.add("berry");
+        //System.out.println("test");
     }
 
     @Override
     public void onCreate() {
-        menuItems = intent.getStringArrayListExtra("menuItems");
+        //menuItems = intent.getStringArrayListExtra("menuItems");
         //System.out.println("test");
         //System.out.println(menuItems);
     }
@@ -50,6 +55,7 @@ class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
+        //System.out.println("getting view");
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list_item);
         views.setTextViewText(R.id.widget_list_item, menuItems.get(position));
         return views;

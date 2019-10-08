@@ -21,7 +21,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/menu_info" />
         </receiver>
-        <service android:name="MenuWidgetService"
+        <service android:name=".MenuWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false" />
         <receiver
