@@ -102,14 +102,14 @@ public class MenuTemplateApp extends FragmentActivity
                 //This for loop adds text to menuText in a format such that meal times, meal items are properly spaced
                 menuTitles.clear();
                 menuDetails.clear();
-                for (Element e : mealTitles) {
-                    menuTitles.add(e.text());
+                for (Element title : mealTitles) {
+                    menuTitles.add(title.text());
                     Elements formatMeals = meals.get(idx).select("> * > *");
                     List<String> mealList = new ArrayList<>();
                     for (Element meal : formatMeals) {
                         mealList.add(meal.text());
                     }
-                    menuDetails.put(e.text(), mealList);
+                    menuDetails.put(title.text(), mealList);
                     idx++;
                 }
                 //Note: closedText only shows in the onPostExecute method if there are no meals detected.

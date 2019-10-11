@@ -22,28 +22,12 @@ import java.util.ArrayList;
 public class MenuWidget extends AppWidgetProvider {
 
     ArrayList<String> menuItems = new ArrayList<>();
-    /*
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
-
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.menu_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
-    }*/
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            //try moving all of this to the async????
-
             new MenuGetter(appWidgetId, appWidgetManager, context).execute();
-
-            //views.setRemoteAdapter(R.id.widget_list, intent);
-            //appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
 
@@ -59,23 +43,14 @@ public class MenuWidget extends AppWidgetProvider {
 
     private class MenuGetter extends AsyncTask<Void, Void, Void> {
 
-        private RemoteViews views;
         private Context context;
-        private Intent intent;
         private int id;
         private AppWidgetManager appWidgetManager;
-        /*
-        public MenuGetter(Context context, RemoteViews views, Intent intent) {
-            this.views = views;
-            this.context = context;
-            this.intent = intent;
-        }*/
+
         public MenuGetter(int appWidgetID, AppWidgetManager appWidgetManager, Context context) {
-            //this.views = views;
             this.id = appWidgetID;
             this.appWidgetManager = appWidgetManager;
             this.context = context;
-            //this.intent = intent;
         }
 
         @Override
@@ -85,13 +60,18 @@ public class MenuWidget extends AppWidgetProvider {
         protected Void doInBackground(Void... voids) {
             try {
                 Document doc = Jsoup.connect("https://appl.housing.ucsb.edu/menu/day/").get();
-                Elements meals = doc.select("#carrillo-body" + " > * > div.panel-body > * > *");
-                //Elements mealTitles = doc.select("#carrillo-body" + " > * > div.panel-heading");
-                for(Element meal : meals) {
-                    menuItems.add(meal.text());
+                Elements meals = doc.select("#carrillo-body" + " > * > div.panel-body");
+                Elements mealTitles = doc.select("#carrillo-body" + " > * > div.panel-heading");
+                for(int i = 0; i < mealTitles.size(); i++) {
+                    menuItems.add(mealTitles.get(i).text());
+                    Elements formatMeals = meals.get(i).select("> * > *");
+                    for(Element meal : formatMeals) {
+                        menuItems.add(meal.text());
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                menuItems.add("No connectivity, check internet");
             }
             //tests if menuitems is parsed correctly.
             //System.out.println(menuItems); this works
