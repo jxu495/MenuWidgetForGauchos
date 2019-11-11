@@ -29,15 +29,18 @@ class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
+        menuItems = intent.getStringArrayListExtra("menuItems");
     }
 
     @Override
     public void onDataSetChanged() {
+        menuItems = intent.getStringArrayListExtra("menuItems");
+        //System.out.println(menuItems);
     }
 
     @Override
     public void onDestroy() {
-
+        menuItems.clear();
     }
 
     @Override
@@ -47,7 +50,6 @@ class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
-        //System.out.println("getting view");
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list_item);
         views.setTextViewText(R.id.widget_list_item, menuItems.get(position));
         return views;
