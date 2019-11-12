@@ -35,7 +35,6 @@ class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onDataSetChanged() {
         menuItems = intent.getStringArrayListExtra("menuItems");
-        //System.out.println(menuItems);
     }
 
     @Override
@@ -57,7 +56,9 @@ class MenuRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getLoadingView() {
-        return null;
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list_item);
+        views.setTextViewText(R.id.widget_list_item, "Loading...");
+        return views;
     }
 
     @Override

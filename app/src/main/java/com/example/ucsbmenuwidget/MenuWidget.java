@@ -27,8 +27,6 @@ public class MenuWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            //appWidgetManager.updateAppWidget(appWidgetId, views);
-            System.out.println("updating");
             new MenuGetter(appWidgetId, appWidgetManager, context).execute();
         }
     }
@@ -36,8 +34,6 @@ public class MenuWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        System.out.println("received");
-        //Bundle extras = intent.getExtras();
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         ComponentName thisAppWidget = new ComponentName(context.getPackageName(), MenuWidget.class.getName());
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
@@ -59,12 +55,13 @@ public class MenuWidget extends AppWidgetProvider {
         private Context context;
         private int id;
         private AppWidgetManager appWidgetManager;
-        ArrayList<String> menuItems = new ArrayList<>();
+        ArrayList<String> menuItems;
 
         public MenuGetter(int appWidgetID, AppWidgetManager appWidgetManager, Context context) {
             this.id = appWidgetID;
             this.appWidgetManager = appWidgetManager;
             this.context = context;
+            menuItems = new ArrayList<>();
         }
 
         @Override
@@ -87,31 +84,24 @@ public class MenuWidget extends AppWidgetProvider {
                 e.printStackTrace();
                 menuItems.add("No connectivity, check internet");
             }
-            //tests if menuitems is parsed correctly.
-            //System.out.println(menuItems); this works
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            System.out.println("in Async");
-            System.out.println(menuItems);
-            //Intent intent = new Intent(context, MenuWidgetService.class);
             Intent intentSync = new Intent(context, MenuWidget.class);
             intentSync.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intentSync, PendingIntent.FLAG_UPDATE_CURRENT);
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.menu_widget);
             views.setOnClickPendingIntent(R.id.appwidget_text, pendingIntent);
-            //RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.menu_widget);
             Intent intent = new Intent(context, MenuWidgetService.class);
-            //intent.setData(Uri.fromParts("content", String.valueOf(id + randomNumber), null));
+            //This line is to bypass the caching of the remoteviewsfactory, it changes the appwidgetid so that
+            //android doesnt use a cached factory with old data. This is a temporary fix, because theres a 0,1% chance
+            //that the data refreshes
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id + Math.round(Math.random() * 1000));
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             intent.putStringArrayListExtra("menuItems", menuItems);
-            //ArrayList<String> test = intent.getStringArrayListExtra("menuItems");
-            //System.out.println(test.get(0));
             views.setRemoteAdapter(id, R.id.widget_list, intent);
-            //appWidgetManager.updateAppWidget(id, null);
             appWidgetManager.notifyAppWidgetViewDataChanged(id, R.id.widget_list);
             appWidgetManager.updateAppWidget(id, views);
             super.onPostExecute(aVoid);
