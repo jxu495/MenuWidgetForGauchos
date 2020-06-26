@@ -1,3 +1,5 @@
+# Notice
+This repo is no longer being updated, instead see https://github.com/jxu495/DiningWidgetKotlin for development.
 # UCSBMenuWidget
 An app that displays the UCSB dining menu and will provide a widget for viewing the menu.
 # Installation 
